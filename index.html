@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECT SHADE | 12-Card Accurate Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <style>
+        :root {
+            --bg-light: #FDFBF7; /* Ultra clean vintage ivory */
+            --bg-dark: #121A15; /* Deep jungle night */
+            --accent: #B28F4B; /* Ancient Gold */
+            --text-dark: #2A302C;
+            --text-light: #FDFBF7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+        }
+
+        /* Slide Container */
+        .slide {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100vw;
+        }
+
+        /* Content Styling */
+        .split-content {
+            padding: 8rem 6rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .split-content.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .slide-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.85;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .features {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .features li {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .features li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Pure Color Panels */
+        .split-panel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-dark), #1a251e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Giant Text Background */
+        .giant-text {
+            color: var(--accent);
+            opacity: 0.15;
+            font-size: clamp(3rem, 7vw, 8rem);
+            margin: 0;
+            white-space: nowrap;
+            letter-spacing: 5px;
+            pointer-events: none;
+            text-align: center;
+            z-index: 1;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* AESTHETIC ANIMAL OUTLINES */
+        .animal-outline {
+            font-size: 380px; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            opacity: 0.4; 
+        }
+
+        .animal-outline svg path {
+            fill: transparent !important;
+            stroke: var(--accent) !important;
+            stroke-width: 12px !important;
+        }
+
+        /* Full Hero Slide */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .tiger-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            letter-spacing: 10px;
+            color: var(--bg-dark);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* Scroll prompt */
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent);
+            animation: fadeInOut 2s infinite;
+        }
+
+        /* Fade up animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+        
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           CONCEPT GALLERY (12 INTERACTIVE CARDS)
+           ========================================= */
+        
+        .gallery-section {
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            padding: 8rem 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gallery-title {
+            color: var(--accent);
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            letter-spacing: 4px;
+            text-align: center;
+        }
+        
+        .gallery-subtitle {
+            color: var(--bg-light);
+            opacity: 0.7;
+            margin-bottom: 4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .concept-item {
+            perspective: 1500px; 
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .concept-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .concept-item.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border: 1px solid rgba(178, 143, 75, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+        }
+
+        /* Image Fronts */
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .concept-item:hover .card-front img {
+            transform: scale(1.05); 
+        }
+
+        /* Typographic / Icon Fronts */
+        .icon-card-front {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(135deg, var(--bg-dark), #1a251e);
+            transition: transform 0.5s ease;
+        }
+        .concept-item:hover .icon-card-front {
+            transform: scale(1.02); 
+        }
+        .icon-card-front span.iconify {
+            font-size: 6rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        /* Overlay */
+        .card-title-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(18, 26, 21, 0.85);
+            padding: 1.5rem 1rem;
+            text-align: center;
+        }
+
+        .card-title-overlay p, .icon-card-front p {
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        /* Back specific (The Information) */
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-back h3 {
+            color: var(--bg-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(178, 143, 75, 0.5);
+            width: 80%;
+            letter-spacing: 1px;
+        }
+
+        .card-back p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 900px) {
+            .slide { 
+                display: flex;
+                flex-direction: column-reverse; /* Ensure image split-panel is always on top */
+            }
+            .split-panel { 
+                min-height: 40vh; 
+            }
+            .split-content {
+                padding: 4rem 2rem; /* Reduce side padding so text fits */
+            }
+            .title {
+                font-size: 2.2rem;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+                letter-spacing: 4px;
+            }
+            .hero p {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
+            }
+            .tiger-logo {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 2rem;
+            }
+            .animal-outline {
+                font-size: 200px; /* Scale down animals so they fit on phones */
+            }
+            .animal-outline svg path {
+                stroke-width: 15px !important; 
+            }
+            .concept-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+            }
+            .card-back {
+                padding: 2rem 1.5rem;
+            }
+            .card-back h3 {
+                font-size: 1.3rem;
+                width: 95%;
+            }
+            .card-back p {
+                font-size: 0.95rem;
+            }
+            .gallery-title {
+                font-size: 2.2rem;
+            }
+            .icon-card-front span.iconify {
+                font-size: 4rem;
+            }
+            .giant-text {
+                font-size: 4rem; /* Stop giant background text from overflowing */
+            }
+        }
+
+        /* Extra small devices (iPhone SE etc) */
+        @media (max-width: 400px) {
+            .split-content {
+                padding: 3rem 1.5rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            .title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <svg class="tiger-logo fade-up" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="var(--accent)" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                <path d="M 30 25 L 40 10 L 60 10 L 70 25 L 85 45 L 75 75 L 50 95 L 25 75 L 15 45 Z" />
+                <path d="M 30 25 C 15 10, 5 25, 15 45" />
+                <path d="M 70 25 C 85 10, 95 25, 85 45" />
+                <path d="M 40 45 L 50 40 L 60 45" />
+                <path d="M 45 65 L 55 65 L 50 75 Z" fill="var(--accent)" />
+                <path d="M 35 45 L 45 42 M 65 45 L 55 42" />
+                <circle cx="38" cy="50" r="2" fill="var(--accent)" stroke="none"/>
+                <circle cx="62" cy="50" r="2" fill="var(--accent)" stroke="none"/>
+                <line x1="50" y1="10" x2="50" y2="35" />
+                <line x1="45" y1="15" x2="45" y2="30" />
+                <line x1="55" y1="15" x2="55" y2="30" />
+            </g>
+        </svg>
+
+        <h1 class="fade-up" style="transition-delay: 0.2s;">PROJECT SHADE</h1>
+        <p class="fade-up" style="transition-delay: 0.4s;">The Primal Outpost</p>
+        <div class="scroll-down">Scroll</div>
+    </section>
+
+    <!-- SLIDE 2 (ESCAPE) -->
+    <section class="slide">
+        <div class="split-content fade-up">
+            <div class="slide-number">01</div>
+            <h2 class="title">The Illusion of Escape</h2>
+            <p class="desc">The wildlife tourism market in Central India is saturated with luxury safaris offering plunge pools and silver-service dining.</p>
+            <p class="desc">For the modern executive, this is not an escape. It is simply a different kind of artificial comfort.</p>
+            <p class="desc" style="font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--accent); margin-top: 2rem;">"The ultimate luxury today is absolute isolation and raw challenge."</p>
+        </div>
+        <div class="split-panel">
+            <h2 class="giant-text">ESCAPE</h2>
+            <span class="iconify animal-outline" data-icon="game-icons:eagle-emblem"></span>
+        </div>
+    </section>
+
+    <!-- SLIDE 3 (THE WILD) -->
+    <section class="slide">
+        <div class="split-panel">
+            <h2 class="giant-text">THE WILD</h2>
+            <span class="iconify animal-outline" data-icon="game-icons:monkey"></span>
+        </div>
+        <div class="split-content dark fade-up">
+            <div class="slide-number">02</div>
+            <h2 class="title">The Transition</h2>
+            <p class="desc">At Shade, guests do not check into a lobby. The transition from the modern world into the wild is physical, absolute, and mandatory.</p>
+            <ul class="features">
+                <li><strong>The Digital Vault:</strong> Surrender all smartphones and screens into a secure lockbox at the drop-point. No signal.</li>
+                <li><strong>The Shade Kit:</strong> Guests are issued a canvas rucksack containing only a canteen, flint-and-steel, and a headlamp.</li>
+                <li><strong>The Crossing:</strong> Enter the property by crossing the natural stream via a rugged rope bridge.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SLIDE 4 (SURVIVE) -->
+    <section class="slide">
+        <div class="split-content fade-up">
+            <div class="slide-number">03</div>
+            <h2 class="title">Survival Mechanics</h2>
+            <p class="desc">We do not employ hidden chefs. At Shade, survival is the hospitality. Guests must engage with the environment to earn their comfort.</p>
+            <ul class="features">
+                <li><strong>The Friction Fire:</strong> Start the communal campfire using primitive methods before dinner is served.</li>
+                <li><strong>Catch & Cook:</strong> Catch local fish using hand-lines, then clean and cook them on scorching river stones.</li>
+                <li><strong>The Survival Cache:</strong> Use a compass and ancient trail markers to unearth a hidden cache containing premium dinner ingredients.</li>
+            </ul>
+        </div>
+        <div class="split-panel">
+             <h2 class="giant-text">SURVIVE</h2>
+             <span class="iconify animal-outline" data-icon="game-icons:tiger-head"></span>
+        </div>
+    </section>
+
+    <!-- SLIDE 5 (NIGHTFALL) -->
+    <section class="slide">
+        <div class="split-panel">
+            <h2 class="giant-text">NIGHTFALL</h2>
+            <span class="iconify animal-outline" data-icon="game-icons:owl"></span>
+        </div>
+        <div class="split-content dark fade-up">
+            <div class="slide-number">04</div>
+            <h2 class="title">The Unseen Observer</h2>
+            <p class="desc">Typical safaris end when the sun goes down. At Shade, the night is when the true experience begins.</p>
+            <ul class="features">
+                <li><strong>Night-Vision Stakeout:</strong> Use military-grade NVGs to silently watch the jungle hunt from sunken bunkers.</li>
+                <li><strong>The Salt Lick Strategy:</strong> A natural mineral lick safely draws wild herbivores and predators directly to the edge of the property.</li>
+                <li><strong>"Silent Dawn":</strong> Sit in absolute silence in an isolated tree blind for 2 hours as the jungle wakes up.</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- SLIDE 6 (HERITAGE) -->
+    <section class="slide">
+        <div class="split-content fade-up">
+            <div class="slide-number">05</div>
+            <h2 class="title">Culture & Endurance</h2>
+            <p class="desc">Pushing the boundaries of the human mind while honoring the ancient traditions of the Tipeshwar region.</p>
+            <ul class="features">
+                <li><strong>The Earth Oven Feast:</strong> Dig a pit, line it with hot stones, and slow-roast hyper-local tribal dishes underground.</li>
+                <li><strong>The Solo Drop:</strong> A guest is left completely alone in a safe, isolated clearing for four hours. The ultimate detox.</li>
+                <li><strong>Ash & Mud Canvas:</strong> Use crushed charcoal and red stream clay to paint large Warli-style murals on a mud wall.</li>
+            </ul>
+        </div>
+        <div class="split-panel">
+             <h2 class="giant-text">HERITAGE</h2>
+             <span class="iconify animal-outline" data-icon="game-icons:stag-head"></span>
+        </div>
+    </section>
+
+    <!-- FINAL GALLERY (12 Cards - 100% ACCURATE) -->
+    <section class="gallery-section">
+        <h2 class="gallery-title fade-up">THE ACTIVITY ROSTER</h2>
+        <p class="gallery-subtitle fade-up">Click on any card to reveal details</p>
+        
+        <div class="concept-grid">
+            
+            <!-- Card 1: Icon Card for Digital Surrender -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sabyasachi_tiger_crest_1783598936426.jpg" alt="Digital Surrender">
+                        <div class="card-title-overlay"><p>Digital Surrender</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Digital Surrender</h3>
+                        <p>Guests must lock away all phones and smartwatches at a secure drop-point before entering the property. No signal. No distractions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Icon Card for Shade Kit -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sabyasachi_jungle_print_1783599297439.jpg" alt="The Shade Kit">
+                        <div class="card-title-overlay"><p>The Shade Kit</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>The Shade Kit</h3>
+                        <p>Upon surrender, guests are issued a vintage canvas rucksack containing only the absolute essentials: a canteen, flint-and-steel, and a headlamp.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="rope_bridge_1783599552640.jpg" alt="The Crossing">
+                        <div class="card-title-overlay"><p>The Crossing</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>The Crossing</h3>
+                        <p>To enter the property, guests must physically cross the natural stream boundary via a rugged rope bridge, severing their ties with civilization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sparks_fire_1783599542165.jpg" alt="Friction Fire">
+                        <div class="card-title-overlay"><p>Friction Fire</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Friction Fire</h3>
+                        <p>Guests are required to successfully start the communal campfire using traditional flint and steel before their evening dinner is served.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="catch_and_cook_fire_1783587110423.jpg" alt="Catch and Cook">
+                        <div class="card-title-overlay"><p>Catch & Cook</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Catch & Cook</h3>
+                        <p>Guests use primitive hand-lines in the stream pools to catch local fish, which they clean and cook on hot river stones.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="camouflaged_machan_1783587120746.jpg" alt="Survival Cache">
+                        <div class="card-title-overlay"><p>Survival Cache</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Survival Cache</h3>
+                        <p>A sophisticated tracker's challenge. Guests use a compass and physical trail markers to unearth a hidden cache containing premium dinner ingredients.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 7: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="night_vision_bunker_1783599565299.jpg" alt="Night Vision">
+                        <div class="card-title-overlay"><p>Night-Vision Stakeout</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Night-Vision Stakeout</h3>
+                        <p>Guests are equipped with military-grade NVGs and sit in camouflaged, sunken bunkers to silently observe the nocturnal jungle.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 8: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="tiger_night_vision_1783598328413.jpg" alt="Salt Lick Strategy">
+                        <div class="card-title-overlay"><p>The Salt Lick</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>The Salt Lick</h3>
+                        <p>A legally positioned natural mineral lick across the stream safely draws wild herbivores and predators directly to the property's edge at night.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 9: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="forest_mist_1783598339005.jpg" alt="Silent Dawn">
+                        <div class="card-title-overlay"><p>Silent Dawn</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Silent Dawn</h3>
+                        <p>An hour before sunrise, guests climb into an isolated canopy blind. They must sit in absolute silence for two hours as the jungle wakes up.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 10: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="earth_oven_cooking_1783598348281.jpg" alt="Earth Oven">
+                        <div class="card-title-overlay"><p>Earth Oven Feast</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Earth Oven Feast</h3>
+                        <p>Guests dig a pit, line it with hot stones, and slow-roast hyper-local Vidarbha tribal dishes underground for hours.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 11: Photo Card -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="primal_camp_dusk_1783587100364.jpg" alt="The Bivouac Challenge">
+                        <div class="card-title-overlay"><p>The Bivouac</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>The Bivouac</h3>
+                        <p>Guests skip their canvas tent for one night and must build a primitive debris hut from branches and leaves, sleeping inside it.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 12: Logo Card for Lore -->
+            <div class="concept-item" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="aesthetic_lantern_1783600432596.jpg" alt="Fire and Lore">
+                        <div class="card-title-overlay"><p>Fire & Lore</p></div>
+                    </div>
+                    <div class="card-back">
+                        <h3>Fire & Lore</h3>
+                        <p>Local tribal elders join the campfire to share authentic, dark historical folklore and ancient tiger-tales of Tipeshwar.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe main text fades
+        document.querySelectorAll('.fade-up').forEach(box => {
+            observer.observe(box);
+        });
+        
+        // Observe grid items for sequential fading
+        const gridItems = document.querySelectorAll('.concept-item');
+        gridItems.forEach((item, index) => {
+            item.style.transitionDelay = `${(index % 3) * 0.15}s`;
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
+
